@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <title>My Bank | Login</title>
+    <style>
+    html,body{
+        margin:0;
+        padding:0;
+    }
+    body{
+        background-color:green;
+    }
+    .login-box{
+        width:100%;
+        height:100%;
+        border-radius: 10px;
+        background-color: #fff;
+        overflow: hidden;
+        margin-top:150px;
+        box-shadow: 5px 5px 15px #000;
+    }
+    .left-side{
+        width:100%;
+        height:60vh;
+        background-color: #ccc;
+        padding:20px;
+        align-content: center;
+        background-image: url('https://i.investopedia.com/content/commentary/can_the_banking_indu/banking_fintech_shutterstock_400246663.jpg');
+        background-position: center;
+        background-size: cover;
+    }
+    .centered-text{
+        width:200px;
+    }
+    .row{
+        height:100%;
+    }
+    #forgot-pass{
+        font-weight:700;
+        color:black;
+    }
+    #forgot-pass:hover{
+        cursor:pointer;
+        color:green;
+    }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="login-box">
+            <div class="row">
+                <div class="col-md-5 d-none d-md-block left-side">
+
+                </div>
+                <div class="col-md-7">
+                    <div class="d-flex m-2 p-2">
+                        <a href="/register?#" class="ml-auto btn btn-sm btn-secondary">CREATE ACCOUNT</a>
+                        
+                    </div>
+                    <p class="text-center h2 mt-5">LOGIN</p>
+                    <div class="d-flex justify-content-center mt-3">
+                        <form action="#">
+                            <input class="form-control mb-2" id="email" type="text" placeholder="Email">
+                            <input type="password" class="form-control mb-2" id="password" placeholder="Password">
+                            <button onclick="login()" class="btn btn-success btn-block" id="login-btn">LOGIN</button>
+                        </form>
+
+                    </div>
+                    <p id="forgot-pass" data-toggle="modal" data-target="#forgot-pass-modal1" class="text-center my-2 font-weight-bold">Forgot Password?</p>
+                    <p id="alert" class="alert alert-danger text-center my-2 d-none">Login Failed</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+
+
+    <!-- The Modal -->
+    <div class="modal fade" id="forgot-pass-modal1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+
+                <!-- Modal Header -->
+                <div class="modal-header">
+                    <h4 class="modal-title">Security Question</h4>
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                </div>
+
+                <!-- Modal body -->
+                <div class="modal-body">
+                    <p id="security-question-modal" class="font-weight-bold"></p>
+                    <input type="text" class="form-control mb-2" placeholder="Enter Answer" id="security-answer-modal">
+                    <input type="text" class="form-control mb-2" placeholder="New Password" id="new-password">
+                    <button onclick="updatePassword()" class="btn btn-success">Update Password</button>
+                    <p class="alert alert-info mt-2" id="forgot-pass-alert">Some Fields are empty</p>
+                </div>
+
+                <!-- Modal footer -->
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <!--Custom Jquery Script-->
+    <script>
+    $(()=>{
+        if(localStorage.getItem("USERID")!=null){
+        if(localStorage.getItem("TYPE")==1){
+            window.location.href="/admin-users";
+        }else
+            window.location.href="/statement";
+        }
+
+
+        $("#forgot-pass-modal1").on('shown.bs.modal',(e)=>{
+        $("#forgot-pass-alert").hide();
+        $("#security-question-modal").text("Loading Question...");
+        $("#security-answer-modal").hide();
+        var email=$("#email").val();
+        if(email!=""){
+            $.ajax({
+                type: "GET",
+                 url: "/getSecurityQuestion?email="+email,
+                 contentType: "application/json; charset=utf-8",
+                 dataType: "json",
+                 success: function(resp) {
+                 console.log(resp);
+                 if(resp.success){
+                        $("#security-question-modal").text(resp.result);
+                        $("#security-answer-modal").show();
+                    }else{
+                        $("#security-question-modal").text(resp.result);
+                        $("#security-answer-modal").hide();
+                    }
+                 }
+            });
+            }else{
+                $("#security-question-modal").text('Please Enter Email in the previous screen');
+                $("#security-answer-modal").hide();
+            }
+        });
+
+    });
+        function login(){
+            $("#login-btn").text("Please Wait ...");
+            $("#login-btn").attr('disabled',true);
+            var email=$("#email").val();
+            var password=$("#password").val();
+            $.ajax({
+                type: "POST",
+                 url: "/login",
+                 data: JSON.stringify({email:email,password:password}),
+                 contentType: "application/json; charset=utf-8",
+                 dataType: "json",
+                 success: function(resp) {
+                    $("#login-btn").text("LOGIN");
+                    $("#login-btn").attr('disabled',false);
+                    if(resp.success){
+
+                        var jsonObj = JSON.parse(resp.result);
+
+                        localStorage.setItem("USERID",jsonObj.userid);
+                        localStorage.setItem("EMAIL",jsonObj.email);
+                        localStorage.setItem("USERNAME",jsonObj.username);
+                        localStorage.setItem("LASTLOGIN",jsonObj.lastlogin);
+                        localStorage.setItem("STATUS",jsonObj.status);
+                        localStorage.setItem("MOBILE",jsonObj.mobile);
+                        localStorage.setItem("TYPE",jsonObj.type);
+                        if(jsonObj.type==1){
+                            window.location.href="/admin-users";
+                        }else{
+                            window.location.href="/statement";
+                        }
+
+                    }else{
+                        $("#alert").removeClass('d-none');
+                        console.log(resp);
+                        $("#alert").text(resp.result);
+                    }
+                 }
+            });
+        }
+
+
+
+        function updatePassword(){
+            $("#forgot-pass-alert").hide();
+            var email=$("#email").val();
+            var newPassword=$("#new-password").val();
+            var security_answer = $("#security-answer-modal").val();
+            if(email!="" && newPassword!="" && security_answer!=""){
+                $.ajax({
+                type: "POST",
+                 url: "/changepassword",
+                 contentType: "application/json; charset=utf-8",
+                 data:JSON.stringify({email:email,password:newPassword,security_answer:security_answer}),
+                 dataType: "json",
+                 success: function(resp) {
+                 console.log(resp);
+                 $("#forgot-pass-alert").show();
+                 if(resp.success){
+                        $("#forgot-pass-alert").text(resp.result);
+                        setTimeout(function(){
+                            $("#forgot-pass-modal1").modal('toggle');
+                        },2000);
+                    }else{
+                        $("#forgot-pass-alert").text(resp.result);
+                    }
+                 }
+            });
+            }else{
+                $("#forgot-pass-alert").show();
+                $("#forgot-pass-alert").text("Some Fields Are Empty");
+            }
+        }
+    </script>
+</body>
+</html>

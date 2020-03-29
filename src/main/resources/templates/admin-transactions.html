@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Admin Panel</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+    <style>
+
+    </style>
+</head>
+<body>
+<div class="row p-3 bg bg-danger">
+    <div class="col-12">
+        <p class="display-4 m-0 text-white text-center">Bank Admin Panel</p>
+    </div>
+</div>
+<div class="container">
+    <div class="row mt-3">
+        <div class="col-md-4">
+            <a href="/admin-users" class="btn btn-block btn-light">USERS</a>
+        </div>
+        <div class="col-md-4">
+            <a href="/admin-accounts" class="btn btn-block btn-light">ACCOUNTS</a>
+        </div>
+        <div class="col-md-4">
+            <a href="/admin-transactions" class="btn btn-block btn-danger">TRANSACTIONS</a>
+        </div>
+    </div>
+</div>
+<div class="container">
+    <div class="row">
+        <div class="col-12">
+            <table class="table mt-4">
+                <thead>
+                <th>TRANSACTION ID</th>
+                <th>DATE</th>
+                <th>FROM ACC-ID</th>
+                <th>TO ACC-ID</th>
+                <th>AMOUNT</th>
+                <th>MODE</th>
+                <th>STATUS</th>
+                <th>TYPE</th>
+                <th>RESULT</th>
+                <th>ACTION</th>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+
+
+<!--Update Transaction Modal-->
+<div class="modal fade" id="myModal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+
+            <!-- Modal Header -->
+            <div class="modal-header">
+                <h4 class="modal-title">Update Transaction Details</h4>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+
+            <!-- Modal body -->
+            <div class="modal-body">
+                <form>
+                    <div class="form-group">
+                        <label for="transactionid">Transaction ID</label>
+                        <input type="text" class="form-control" disabled id="transactionid">
+                    </div>
+                    <input type="hidden" class="form-control" id="date" disabled placeholder="Transaction Date">
+                    <div class="form-group">
+                        <label for="fromaccountid">Sender Account Number</label>
+                        <input type="text" class="form-control" id="fromaccountid" placeholder="Sender Account Number">
+                    </div>
+                    <div class="form-group">
+                        <label for="toaccountid">Recipient Account Number</label>
+                        <input type="text" class="form-control" id="toaccountid" placeholder="Recipient Account Number">
+                    </div>
+                    <div class="form-group">
+                        <label for="amount">Amount</label>
+                        <input type="text" class="form-control" id="amount" placeholder="Amount">
+                    </div>
+                    <div class="form-group">
+                        <label for="mode">Mode of Payment</label>
+                        <input type="text" class="form-control" id="mode" placeholder="Mode of Payment">
+                    </div>
+                    <div class="form-group">
+                        <label for="status">Status</label>
+                        <input type="text" class="form-control" id="status" placeholder="Status">
+                    </div>
+                    <div class="form-group">
+                        <label for="type">Update Type</label>
+                        <input type="text" class="form-control" id="type" placeholder="Update Type">
+                    </div>
+                    <div class="form-group">
+                        <label for="result">Result</label>
+                        <input type="text" class="form-control" id="result" placeholder="Result">
+                    </div>
+                    <button class="btn btn-success" onclick="update()">Update</button>
+                </form>
+            </div>
+
+            <!-- Modal footer -->
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
+
+<!--Custom Javascript-->
+<script>
+    $(()=>{
+    if(localStorage.getItem("USERID")==null){
+            window.location.href="/login?#";
+        }
+        getAllTransactions();
+        $("#myModal").on('shown.bs.modal',(e)=>{
+        var transactionid=$(e.relatedTarget).data('id');
+        $("#transactionid").val(transactionid);
+            $.ajax({
+                type: "GET",
+                 url: "/getTransactionById?transactionid="+transactionid,
+                 contentType: "application/json; charset=utf-8",
+                 dataType: "json",
+                 success: function(resp) {
+                 if(resp.success){
+                    //SETTING VALUES
+                    console.log(resp.result);
+                    var jsonObj = JSON.parse(resp.result);
+                    $("#date").val(jsonObj.time);
+                    $("#fromaccountid").val(jsonObj.fromaccountid);
+                    $("#toaccountid").val(jsonObj.toaccountid);
+                    $("#mode").val(jsonObj.modeofpayment);
+                    $("#result").val(jsonObj.result);
+                    $("#status").val(jsonObj.status);
+                    $("#type").val(jsonObj.updatetype);
+                    $("#amount").val(jsonObj.amount);
+                 }else{
+                    logout();
+                 }
+               }
+           });
+        });
+    });
+    function getAllTransactions(){
+        $.ajax({
+                type: "GET",
+                 url: "/all-transactions",
+                 contentType: "application/json; charset=utf-8",
+                 dataType: "json",
+                 success: function(resp) {
+                 if(resp.success){
+                    $("tbody").html(generateTable(JSON.parse(resp.result)));
+                 }else{
+                    logout();
+                 }
+               }
+           });
+    }
+    function generateTable(res){
+        var str="";
+        var month = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+        for(var i=0;i<res.length;i++){
+            var d=new Date(res[i].time);
+            var dateString = d.getDate()+" "+month[d.getMonth()]+", "+d.getFullYear();
+            str+='<tr><td>'+res[i].transactionid+'</td><td>'+dateString+'</td><td>'+res[i].fromaccountid+'</td><td>'+res[i].toaccountid+'</td><td>'+res[i].amount+'</td><td>'+res[i].modeofpayment+'</td><td>'+res[i].status+'</td><td>'+res[i].updatetype+'</td><td>'+res[i].result+'</td><td><a href="#" data-target="#myModal" data-toggle="modal" data-id="'+res[i].transactionid+'" class="btn btn-danger">Modify</a></td></tr>';
+        }
+        return str;
+    }
+</script>
+</body>
+</html>

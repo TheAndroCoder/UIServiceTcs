@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Admin Panel</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+    <style>
+        /* The switch - the box around the slider */
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 60px;
+  height: 34px;
+}
+
+/* Hide default HTML checkbox */
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+/* The slider */
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #ccc;
+  -webkit-transition: .4s;
+  transition: .4s;
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 26px;
+  width: 26px;
+  left: 4px;
+  bottom: 4px;
+  background-color: white;
+  -webkit-transition: .4s;
+  transition: .4s;
+}
+
+input:checked + .slider {
+  background-color: #2196F3;
+}
+
+input:focus + .slider {
+  box-shadow: 0 0 1px #2196F3;
+}
+
+input:checked + .slider:before {
+  -webkit-transform: translateX(26px);
+  -ms-transform: translateX(26px);
+  transform: translateX(26px);
+}
+
+/* Rounded sliders */
+.slider.round {
+  border-radius: 34px;
+}
+
+.slider.round:before {
+  border-radius: 50%;
+}
+    </style>
+</head>
+<body>
+<div class="row p-3 bg bg-danger">
+    <div class="col-10">
+        <p class="display-4 m-0 text-white text-center">Bank Admin Panel</p>
+    </div>
+    <div class="col-2">
+        <a href="/login?#" onclick="logout()" class="btn btn-danger">Logout</a>
+    </div>
+</div>
+<div class="container">
+    <div class="row mt-3">
+        <div class="col-md-4">
+            <a href="/admin-users" class="btn btn-block btn-danger">USERS</a>
+        </div>
+        <div class="col-md-4">
+            <a href="/admin-accounts" class="btn btn-block btn-light">ACCOUNTS</a>
+        </div>
+        <div class="col-md-4">
+            <a href="/admin-transactions" class="btn btn-block btn-light">TRANSACTIONS</a>
+        </div>
+    </div>
+</div>
+<div class="container">
+    <div class="row">
+        <div class="col-12">
+            <table class="table mt-4">
+                <thead>
+                <th>USER ID</th>
+                <th>USER NAME</th>
+                <th>EMAIL</th>
+                <th>MOBILE</th>
+                <th>DOB</th>
+                <th>ACTION</th>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+
+
+<!--Update User Modal-->
+<div class="modal fade" id="myModal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+
+            <!-- Modal Header -->
+            <div class="modal-header">
+                <h4 class="modal-title">Update User Details</h4>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+
+            <!-- Modal body -->
+            <div class="modal-body">
+                <form action="/update-user" method="post">
+                    <div class="form-group">
+                        <label for="userid">User ID</label>
+                        <input type="text" class="form-control" disabled id="userid">
+                    </div>
+                    <div class="form-group">
+                        <label for="username">Username</label>
+                        <input type="text" class="form-control" id="username" placeholder="Username">
+                    </div>
+                    <div class="form-group">
+                        <label for="username">Email</label>
+                        <input type="text" class="form-control" id="email" placeholder="Email">
+                    </div>
+                    <div class="form-group">
+                        <label for="username">Password</label>
+                        <input type="text" class="form-control" id="password" placeholder="Password">
+                    </div>
+                    <div class="form-group">
+                        <label for="username">Mobile</label>
+                        <input type="text" class="form-control" id="mobile" placeholder="Mobile">
+                    </div>
+                    <div class="form-group">
+                        <label for="username">DOB</label>
+                        <input type="date" class="form-control" id="dob" placeholder="DOB">
+                    </div>
+                    <div class="form-group">
+                        <label for="username">Security Answer</label>
+                        <input type="date" class="form-control" id="answer" placeholder="Security Answer">
+                    </div>
+                    <p>Active / InActive</p>
+                    <label class="switch">
+                        <input type="checkbox" id="active">
+                        <span class="slider round"></span>
+                    </label>
+                    <input type="hidden" id="lastlogin">
+                    <input type="hidden" id="lastmodified">
+                    <input type="hidden" id="security_question_id">
+                    <input type="hidden" id="addedon">
+                </form>
+            </div>
+
+            <!-- Modal footer -->
+            <div class="modal-footer">
+                <button type="button" class="btn btn-success" onclick="putUser()">Update</button>
+                <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
+
+<!--Custom Javascript-->
+<script>
+    $(()=>{
+        console.log('Admin Users Page Loaded');
+        if(localStorage.getItem("USERID")==null || localStorage.getItem("TYPE")!=1){
+            window.location.href="/login?#";
+        }
+        getAllUsers();
+        $("#myModal").on('shown.bs.modal',(e)=>{
+            var userid=$(e.relatedTarget).data('id');
+            $("#userid").val(userid);
+            $.ajax({
+                type: "GET",
+                 url: "/getUserById?userid="+userid,
+                 contentType: "application/json; charset=utf-8",
+                 dataType: "json",
+                 success: function(resp) {
+                 if(resp.success){
+                    //console.log("Response Got");
+                    var jsonObj = JSON.parse(resp.result);
+                    console.log(jsonObj);
+                    console.log(jsonObj);
+                    $("#username").val(jsonObj.username);
+                    $("#dob").val(jsonObj.dob);
+                    $("#email").val(jsonObj.email);
+                    $("#password").val(jsonObj.password);
+                    $("#mobile").val(jsonObj.mobile);
+                    $("#answer").val(jsonObj.security_answer);
+                    $("#security_question_id").val(jsonObj.security_question_id);
+                    $("#lastlogin").val(jsonObj.lastlogin);
+                    $("#lastmodified").val(jsonObj.lastmodified);
+                    $("#addedon").val(jsonObj.addedon);
+                    var active = jsonObj.status;
+                    if(active==1){
+                        $("#active").prop('checked',true);
+                    }else if(active==0){
+                        $("#active").prop('checked',false);
+                    }
+                 }else{
+                    logout();
+                 }
+               }
+           });
+
+        });
+
+    });
+    function getAllUsers(){
+        $.ajax({
+                type: "GET",
+                 url: "/all-users",
+                 contentType: "application/json; charset=utf-8",
+                 dataType: "json",
+                 success: function(resp) {
+                 if(resp.success){
+                    var list=JSON.parse(resp.result);
+                    $("tbody").html(generateTable(list));
+                 }else{
+                    logout();
+                 }
+               }
+           });
+    }
+    function generateTable(res){
+        var str="";
+        for(var i=0;i<res.length;i++){
+            str+='<tr><td>'+res[i].userid+'</td><td>'+res[i].username+'</td><td>'+res[i].email+'</td><td>'+res[i].mobile+'</td><td>'+res[i].dob+'</td><td><a href="#" class="btn btn-danger" data-target="#myModal" data-toggle="modal" data-id="'+res[i].userid+'">Modify</a></td></tr>';
+        }
+        return str;
+    }
+    function logout(){
+        localStorage.clear();
+        window.location.href="/login?#";
+    }
+    function logout(){
+        localStorage.clear();
+        return true;
+    }
+    function putUser(){
+        var userid = $("#userid").val();
+        var username = $("#username").val();
+        var email = $("#email").val();
+        var password = $("#password").val();
+        var mobile = $("#mobile").val();
+        var addedon = $("#addedon").val();
+        var lastmodified = $("#lastmodified").val();
+        var dob = $("#dob").val();
+        var status = 1;
+        var type = 0;
+        var lastlogin = $("#lastlogin").val();
+        var security_question_id = $("#security_question_id").val();
+        var security_answer = $("#answer").val();
+        if(!$("#active").prop('checked'))status=0;
+        $.ajax({
+                type: "POST",
+                 url: "/updateUser",
+                 data:JSON.stringify({userid:userid,username:username,email:email,password:password,mobile:mobile,addedon:addedon,lastmodified:lastmodified,dob:dob,status:status,type:type,lastlogin:lastlogin,security_question_id:security_question_id,security_answer:security_answer}),
+                 contentType: "application/json; charset=utf-8",
+                 dataType: "json",
+                 success: function(resp) {
+                 if(resp.success){
+                    console.log(resp.result);
+                    $("#myModal").modal('toggle');
+                 }else{
+                    logout();
+                 }
+               }
+           });
+    }
+</script>
+</body>
+</html>

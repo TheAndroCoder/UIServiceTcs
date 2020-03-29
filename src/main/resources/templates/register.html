@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <title>My Bank | Register</title>
+    <style>
+    html,body{
+        margin:0;
+        padding:0;
+    }
+    body{
+        background-color:green;
+    }
+    .login-box{
+        width:100%;
+        height:100%;
+        border-radius: 10px;
+        background-color: #fff;
+        overflow: hidden;
+        margin-top:150px;
+        box-shadow: 5px 5px 15px #000;
+    }
+    .left-side{
+        width:100%;
+        height:60vh;
+        background-color: #ccc;
+        padding:20px;
+        align-content: center;
+        background-image: url('https://i.investopedia.com/content/commentary/can_the_banking_indu/banking_fintech_shutterstock_400246663.jpg');
+        background-position: center;
+        background-size: cover;
+    }
+    .centered-text{
+        width:200px;
+    }
+    .row{
+        height:100%;
+    }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="login-box">
+            <div class="row">
+                <div class="col-md-5 d-none d-md-block left-side">
+
+                </div>
+                <div class="col-md-7">
+                    <div class="d-flex m-2 p-2">
+                        <a href="/login?#" class="ml-auto btn btn-sm btn-secondary">LOGIN</a>
+                        
+                    </div>
+                    <p class="text-center h2 mt-5">REGISTER</p>
+                    <div class="d-flex justify-content-center mt-3">
+                        <form action="#">
+                            <input class="form-control mb-2" id="email" type="text" placeholder="Email">
+                            <input class="form-control mb-2" id="username" type="text" placeholder="Username">
+                            <input class="form-control mb-2" id="mobile" type="text" placeholder="Mobile">
+                            <input type="password" class="form-control mb-2" id="password" placeholder="Password">
+                            <input type="date" class="mb-2 form-control" id="dob" placeholder="DOB"/>
+                            <select id="select_question" class="form-control">
+                                <option value="1">City Of Birth?</option>
+                                <option value="2">What is your Aadhar Number?</option>
+                                <option value="3">What is Your PAN Number?</option>
+                                <option value="4">What was the name of your elementary/primary school?</option>
+                            </select>
+                            <input type="text" class="form-control mb-2" id="security-question" placeholder="Answer the above question"/>
+                            <button class="btn btn-success btn-block mb-2" onclick="register()" id="register-btn">REGISTER</button>
+                        </form>
+                    </div>
+                    <p id="alert" class="alert text-center my-2 d-none"></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+    <script>
+        $(()=>{
+            console.log("document is ready");
+        });
+        function register(){
+            $("#register-btn").text("Please Wait ...");
+            $("#register-btn").attr("disabled",true);
+            $("#alert").addClass("d-none");
+            $("#alert").removeClass('alert-success');
+            $("#alert").removeClass('alert-danger');
+            var email=$("#email").val();
+            var username=$("#username").val();
+            var password=$("#password").val();
+            var mobile=$("#mobile").val();
+            var dob = $("#dob").val();
+            var answer = $("#security-question").val();
+            var question_id=$("#select_question").val();
+            console.log(email);
+            $.ajax({
+                type: "POST",
+                 url: "/register",
+                 data: JSON.stringify({username:username,mobile:mobile,email:email,password:password,dob:dob,type:0,security_question_id:question_id,security_answer:answer}),
+                 contentType: "application/json; charset=utf-8",
+                 dataType: "json",
+                 success: function(resp) {
+                    $("#register-btn").text("REGISTER");
+                    $("#register-btn").attr("disabled",false);
+                    if(resp.success){
+                        $("#alert").removeClass('d-none');
+                        $("#alert").addClass("alert-success");
+                        $("#alert").text("Registration Success ! Redirecting to Login page in 3 seconds...");
+                        setTimeout(function(){
+                            window.location.href="/login?#";
+                        },3000);
+                    }else{
+                        $("#alert").removeClass('d-none');
+                        $("#alert").addClass("alert-danger");
+                        $("#alert").text(resp.result);
+                    }
+                 }
+            });
+        }
+    </script>
+</body>
+</html>

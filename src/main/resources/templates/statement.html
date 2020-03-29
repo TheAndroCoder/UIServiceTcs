@@ -1,0 +1,180 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+    <style>
+        *{
+            padding:0;
+            margin:0;
+        }
+    .main-row{
+        height:100%;
+        width:100%;
+        position: absolute;
+    }
+    .left{
+        background-color: #CEECF5;
+    }
+    .right{
+        background-color: white;
+    }
+    .activated{
+        border-top-right-radius: 20px;
+        border-bottom-right-radius: 20px;
+        background-color: #81BEF7;
+    }
+    .heading-div{
+        width:100%;
+        height:200px;
+
+    }
+    .summary-card{
+        background-color: white;
+        border-radius: 10px;
+        box-shadow: 2px 2px 10px #000;
+    }
+    hr{
+        background-color:#ccc;
+    }
+    #snackbar {
+  visibility: hidden; /* Hidden by default. Visible on click */
+  min-width: 250px; /* Set a default minimum width */
+  margin-left: -125px; /* Divide value of min-width by 2 */
+  background-color: red; /* Black background color */
+  color: #fff; /* White text color */
+  text-align: center; /* Centered text */
+  border-radius: 5px; /* Rounded borders */
+  padding: 16px; /* Padding */
+  position: fixed; /* Sit on top of the screen */
+  z-index: 1; /* Add a z-index if needed */
+  left: 50%; /* Center the snackbar */
+  bottom: 30px; /* 30px from the bottom */
+}
+
+/* Show the snackbar when clicking on a button (class added with JavaScript) */
+#snackbar.show {
+  visibility: visible; /* Show the snackbar */
+  /* Add animation: Take 0.5 seconds to fade in and out the snackbar.
+  However, delay the fade out process for 2.5 seconds */
+  -webkit-animation: fadein 0.5s, fadeout 0.5s 2.5s;
+  animation: fadein 0.5s, fadeout 0.5s 2.5s;
+}
+    </style>
+    <title>My Bank | Dashboard</title>
+</head>
+<body>
+<nav class="navbar navbar-expand-lg navbar-dark" style="background-color: blue;">
+    <a class="navbar-brand" href="#">My Bank</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+        <div class="navbar-nav d-lg-none">
+            <div class="mt-3">
+                <p class="text-center"><i class="fa fa-user-circle fa-4x text-light"></i></p>
+                <p class="text-light text-center font-weight-bold username">USERNAME HERE</p>
+            </div>
+            <a class="nav-item nav-link active" href="/statement">Account Summary <span class="sr-only">(current)</span></a>
+            <a class="nav-item nav-link" href="/transfer">Fund Transfer</a>
+            <a class="nav-item nav-link" href="/passbook">E-Passbook</a>
+            <a class="nav-item nav-link" href="#">Account Settings</a>
+            <a class="nav-item nav-link" href="/login" onclick="logout()">Logout</a>
+        </div>
+    </div>
+</nav>
+<div class="row main-row m-0 p-0">
+    <div class="col-lg-2 d-none d-lg-block left p-0">
+        <div class="mt-3">
+            <p class="text-center"><i class="fa fa-user-circle fa-4x text-primary"></i></p>
+            <p class="text-primary text-center font-weight-bold username">USERNAME HERE</p>
+        </div>
+        <div class="mt-5">
+            <p class="text-primary activated m-0 p-2"><i class="fa fa-list-ul mr-2"></i><a href="/statement">Account Summary</a></p>
+            <p class="text-primary m-0 p-2"><i class="fa fa-exchange mr-2"></i><a href="/transfer">Fund Transfer</a></p>
+            <p class="text-primary m-0 p-2"><i class="fa fa-copy mr-2"></i><a href="/passbook">E-Passbook</a></p>
+            <p class="text-primary m-0 p-2"><i class="fa fa-cogs mr-2"></i>Account Settings</p>
+            <p class="text-primary m-0 p-2"><i class="fa fa-sign-out mr-2"></i><a href="/login" onclick="logout()">Logout</a></p>
+        </div>
+    </div>
+    <div class="col-lg-10 col-sm-12 right p-0">
+        <div class="bg-primary heading-div">
+            <p class="text-light display-4 ml-3 pt-3">Account Summary</p>
+        </div>
+        <div class="container">
+            <div class="row bg-white p-4 summary-card" style="margin-top: -50px;">
+                <div class="col-6 p-0">
+                    <p><b>Account Number</b></p><hr>
+                    <p><b>User Name</b></p><hr>
+                    <p><b>Account Balance</b></p><hr>
+                    <p><b>Currency</b></p>
+                </div>
+                <div class="col-6 p-0">
+                    <p id="account-num">Loading...</p><hr>
+                    <p class="username">Sachin Rana</p><hr>
+                    <p id="balance">Loading...</p><hr>
+                    <p>INR (Indian Rupee)</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<span id="snackbar" class="show"></span>
+
+
+
+<!--Custom Javascript-->
+<script>
+    $(()=>{
+    if(localStorage.getItem("USERID")==null){
+        window.location.href="/login?#";
+    }
+    var d=new Date(parseInt(localStorage.getItem("LASTLOGIN")));
+    var lastLogin = d.getDate()+"/"+(d.getMonth()+1)+"/"+d.getFullYear()+" at "+(d.getHours()+1)+":"+d.getMinutes();
+    console.log(lastLogin);
+    getAccountDetails();
+        $(".username").text(localStorage.getItem("USERNAME"));
+        var x=$("#snackbar");
+        x.text("LAST LOGIN ON : "+lastLogin);
+        x.addClass("show");
+        setTimeout(function(){x.removeClass("show")},3000);
+    });
+    function logout(){
+        localStorage.clear();
+        return true;
+    }
+    function getAccountDetails(){
+    if(localStorage.getItem("ACCOUNT-NUM")!=null){
+        $("#balance").text(localStorage.getItem("BALANCE"));
+        $("#account-num").text(localStorage.getItem("ACCOUNT-NUM"));
+        return;
+    }
+        $.ajax({
+                type: "GET",
+                 url: "/getaccount?userid="+localStorage.getItem('USERID'),
+                 contentType: "application/json; charset=utf-8",
+                 dataType: "json",
+                 success: function(resp) {
+                 if(resp.success){
+                    let account = JSON.parse(resp.result);
+                         $("#balance").text(account.balance);
+                         $("#account-num").text(account.accountid);
+                         localStorage.setItem("BALANCE",account.balance);
+                         localStorage.setItem("ACCOUNT-NUM",account.accountid);
+                    }else{
+                        //$("#forgot-pass-alert").text(resp.result);
+                    }
+                 }
+            });
+    }
+</script>
+</body>
+</html>
